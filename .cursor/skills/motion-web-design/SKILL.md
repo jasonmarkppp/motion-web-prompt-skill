@@ -1,6 +1,6 @@
 ---
 name: motion-web-design
-description: 动效网页 Prompt 模板库。328 条 WEB/APP 模板。默认工作流：选定模板，保留动效/CSS/布局底层，替换为用户自己的品牌与文案；也支持原样输出。兼容 Cursor、Claude Code、Codex、Windsurf 及任何可读 RULES.md 的 Agent。触发：网页模板、落地页 Prompt、套模板、改模板、动效网页、motion-web-design。
+description: 动效网页 Prompt 模板库。328 条 WEB/APP 模板。默认工作流：选定模板，保留动效/CSS/布局底层，替换为用户自己的品牌与文案；也支持原样输出。兼容 Cursor、Claude Code、Codex、Windsurf 及任何可读 RULES.md 的 Agent。触发：网页模板、落地页 Prompt、套模板、改模板、动效网页、motion-web-design。安装触发：帮我安装这个 Skill、安装 motion-web-design、装动效网页 Skill、install motion-web-design — 读 INSTALL.md 一键装齐规则+全部模板。
 ---
 
 # motion-web-design
@@ -8,6 +8,10 @@ description: 动效网页 Prompt 模板库。328 条 WEB/APP 模板。默认工�
 328 条结构化网页设计 Prompt。**默认用法不是原样复制，而是：选模板 → 底层动效逻辑不变 → 内容换成用户自己的。**
 
 Agent 必须读 [RULES.md](RULES.md)（通用规则，不限 Cursor）。
+
+## 安装（用户说「帮我装这个 Skill」时）
+
+**先读 [INSTALL.md](INSTALL.md)**，运行 `scripts/install.ps1` 或 `scripts/install.sh`，把 **规则 + prompts + catalog** 一次性装进 `~/.cursor/skills/motion-web-design/`。不要只复制 SKILL.md。
 
 ## 默认工作流
 
@@ -37,17 +41,22 @@ Agent 必须读 [RULES.md](RULES.md)（通用规则，不限 Cursor）。
 | **Bolt / Lovable / v0 等** | 从 [GitHub 仓库](https://github.com/jasonmarkppp/motion-web-prompt-skill) 或本站复制 Prompt；按 RULES 只改内容层 |
 | **ChatGPT / Claude 网页** | 粘贴模板 Prompt + 附上 RULES 里「内容层 vs 实现层」说明 |
 
-**数据与规则分离**：`prompts/` + `catalog.json` 是模板库；`RULES.md` 是行为规则。任何 Agent 只要两者都能读到就能用。
+**完整安装后**：`prompts/` + `catalog.json` 与 `RULES.md` 同在 Skill 目录内，本地读模板，不依赖 GitHub。
 
 完整跨平台说明：[COMPAT.md](COMPAT.md)
 
-## 安装（GitHub）
+## 给别人安装（一句话）
+
+用户说「帮我安装 motion-web-design」→ Agent 读 [INSTALL.md](INSTALL.md) 并执行安装脚本。
+
+手动：
 
 ```bash
 git clone https://github.com/jasonmarkppp/motion-web-prompt-skill.git
-cp -r motion-web-prompt-skill/.cursor/skills/motion-web-design ~/.cursor/skills/
-cp -r motion-web-prompt-skill/prompts ./prompts
-cp motion-web-prompt-skill/catalog.json ./catalog.json
+# Windows
+.\motion-web-prompt-skill\scripts\install.ps1
+# macOS / Linux
+bash motion-web-prompt-skill/scripts/install.sh
 ```
 
 ## 调用示例

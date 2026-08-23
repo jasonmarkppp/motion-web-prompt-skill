@@ -32,15 +32,20 @@
 
 ## 路径解析
 
+`skill_root` = 本 `RULES.md` 所在目录（完整安装后含 `prompts/` 与 `catalog.json`）。
+
 按顺序查找模板：
 
-1. 工作区根目录 `prompts/{id}.md`
-2. 工作区根目录 `motion-web-prompt-skill/prompts/{id}.md`
-3. 与 `catalog.json` 同目录的 `prompts/{id}.md`
-4. 本地都没有时，GitHub Raw：
+1. `{skill_root}/prompts/{id}.md`（**完整安装后的首选**）
+2. 工作区根目录 `prompts/{id}.md`
+3. 工作区 `motion-web-prompt-skill/prompts/{id}.md`
+4. 与任意本地 `catalog.json` 同目录的 `prompts/{id}.md`
+5. **仅当本地都没有时**，GitHub Raw 兜底：
    `https://raw.githubusercontent.com/jasonmarkppp/motion-web-prompt-skill/main/prompts/{id}.md`
 
-索引：`catalog.json`（328 条，含 id / title / category / platform / description）。
+索引：优先 `{skill_root}/catalog.json`，其次工作区内的 `catalog.json`（328 条，含 id / title / category / platform / description）。
+
+未安装完整包（只有 SKILL.md、无本地 prompts）时 → 先执行 [INSTALL.md](INSTALL.md)。
 
 ---
 
