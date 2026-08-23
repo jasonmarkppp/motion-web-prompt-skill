@@ -1,66 +1,93 @@
 ---
 name: motion-web-design
-description: 动效网页 Prompt 模板库 Skill。328 条 WEB/APP 模板，支持直接套用或按用户要求微调品牌/配色/文案/行业后输出完整 Prompt 或代码。触发：网页模板 Prompt、落地页 Prompt、motion-web-design、套模板、改模板、动效网页。
+description: 动效网页 Prompt 模板库。328 条 WEB/APP 模板。默认工作流：选定模板，保留动效/CSS/布局底层，替换为用户自己的品牌与文案；也支持原样输出。兼容 Cursor、Claude Code、Codex、Windsurf 及任何可读 RULES.md 的 Agent。触发：网页模板、落地页 Prompt、套模板、改模板、动效网页、motion-web-design。
 ---
 
 # motion-web-design
 
-本 Skill 提供 **328 条结构化网页设计 Prompt 模板**，Agent 必须按 [RULES.md](RULES.md) 执行。
+328 条结构化网页设计 Prompt。**默认用法不是原样复制，而是：选模板 → 底层动效逻辑不变 → 内容换成用户自己的。**
 
-## 两种用法
+Agent 必须读 [RULES.md](RULES.md)（通用规则，不限 Cursor）。
 
-| 模式 | 用户怎么说 | Agent 做什么 |
-|------|-----------|-------------|
-| **直接套模板** | 「套 XXX 模板」「原样输出」「用这个 Prompt」 | 读 `prompts/{id}.md`，原样输出或按 Prompt 写代码 |
-| **套模板 + 微调** | 「以 XXX 为底，改品牌/配色/文案」「类似 XXX 但…」 | 读模板，**只改用户点名的部分**，其余布局/动效/技术栈保留 |
+## 默认工作流
 
-规则细节、保留项、禁止项 → **[RULES.md](RULES.md)**（Agent 必读）。
+```
+1. 用户选定模板（或让 Agent 从 catalog 推荐）
+2. Agent 读 prompts/{id}.md
+3. 保留：技术栈、布局结构、keyframes、parallax/scroll/glass 等动效、断点
+4. 替换：品牌、文案、行业卖点、CTA、用户给的配色/素材
+5. 输出完整 Prompt（可直接写代码）
+```
+
+| 用户意图 | 模式 |
+|----------|------|
+| 「改成我的品牌 / 行业 / 文案」（最常见） | **模式 B：内容替换**（默认） |
+| 「原样 / 不要改 / 直接复制」 | 模式 A：原样输出 |
+| 「帮我找一个 XX 风格的」 | 模式 C：推荐 → 再进模式 B |
+
+细节见 [RULES.md](RULES.md)。
+
+## 适用环境（不只 Cursor）
+
+| 环境 | 安装方式 |
+|------|----------|
+| **Cursor** | `cp -r .../.cursor/skills/motion-web-design ~/.cursor/skills/` |
+| **Claude Code / Codex / 同类** | 复制到 `.agents/skills/motion-web-design/`，或把 [RULES.md](RULES.md) 链进 `AGENTS.md` |
+| **Windsurf / 其他 IDE Agent** | 复制 Skill 目录到该工具的 skills/rules 目录；或项目内放 `prompts/` + 引用 `RULES.md` |
+| **Bolt / Lovable / v0 等** | 从 [GitHub 仓库](https://github.com/jasonmarkppp/motion-web-prompt-skill) 或本站复制 Prompt；按 RULES 只改内容层 |
+| **ChatGPT / Claude 网页** | 粘贴模板 Prompt + 附上 RULES 里「内容层 vs 实现层」说明 |
+
+**数据与规则分离**：`prompts/` + `catalog.json` 是模板库；`RULES.md` 是行为规则。任何 Agent 只要两者都能读到就能用。
+
+完整跨平台说明：[COMPAT.md](COMPAT.md)
 
 ## 安装（GitHub）
 
 ```bash
 git clone https://github.com/jasonmarkppp/motion-web-prompt-skill.git
 cp -r motion-web-prompt-skill/.cursor/skills/motion-web-design ~/.cursor/skills/
+cp -r motion-web-prompt-skill/prompts ./prompts
+cp motion-web-prompt-skill/catalog.json ./catalog.json
 ```
 
-推荐把整仓 clone 到项目旁，Agent 才能读到 `prompts/` 和 `catalog.json`：
+## 调用示例
 
-```bash
-git clone https://github.com/jasonmarkppp/motion-web-prompt-skill.git
-# 在项目根目录
-ln -s ../motion-web-prompt-skill/prompts ./prompts   # 或复制 prompts 目录
+**最常见（内容替换，默认）**
+
+```
+用 motion-web-design，以 dreamcore-landing 为模板，品牌改成「小氵AI」，文案按 AI 工具站写，动效和布局别动
+```
+
+```
+@motion-web-design 选 interactive-discovery，我是做地质科普的，配色偏暖橙，其他实现层保留
+```
+
+**原样**
+
+```
+用 motion-web-design，原样输出 bold-studio 的 Prompt
+```
+
+**推荐**
+
+```
+用 motion-web-design 找一个 WEB Portfolio，推荐 3 条
 ```
 
 ## 数据文件
 
 | 文件 | 说明 |
 |------|------|
-| `catalog.json` | 328 条索引（id / title / category / platform） |
+| `catalog.json` | 328 条索引 |
 | `prompts/{id}.md` | 单条完整 Prompt |
-| `data/all-prompts.json` | 全文 JSON 备份 |
-
-路径解析顺序见 [RULES.md#路径解析](RULES.md#路径解析)。
-
-## 调用示例
-
-```
-用 motion-web-design，套 dreamcore-landing 模板
-```
-
-```
-@motion-web-design 以 interactive-discovery 为底，品牌改成 XX，配色改蓝色，其余不动
-```
-
-```
-用 motion-web-design 找一个 WEB 类的 Portfolio 模板，推荐 3 条
-```
+| `data/all-prompts.json` | 全文 JSON |
+| `RULES.md` | Agent 规则（必读） |
 
 ## 分类
 
-- **WEB**（platform=website）：311 条
-- **APP**（platform=app）：17 条
+- **WEB** 311 条 · **APP** 17 条
 
 ## 附加资源
 
-- Agent 规则：[RULES.md](RULES.md)
+- 跨平台适配：[COMPAT.md](COMPAT.md)
 - 案例：[examples.md](examples.md)

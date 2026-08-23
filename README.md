@@ -1,59 +1,34 @@
 # motion-web-prompt-skill
 
-328 条 AI 动效网页设计 Prompt 模板 + Cursor Agent Skill。
+328 条 AI 动效网页设计 Prompt 模板 + **通用 Agent 规则**。
 
-## 安装 Skill
+**默认用法**：选定模板 → **动效 / CSS / 布局底层保留** → **品牌与文案换成用户自己的**。  
+不限 Cursor，见 [COMPAT.md](.cursor/skills/motion-web-design/COMPAT.md)。
+
+## 快速开始
 
 ```bash
 git clone https://github.com/jasonmarkppp/motion-web-prompt-skill.git
-cp -r motion-web-prompt-skill/.cursor/skills/motion-web-design ~/.cursor/skills/
-```
-
-或在项目内：
-
-```bash
-mkdir -p .cursor/skills
-cp -r motion-web-prompt-skill/.cursor/skills/motion-web-design .cursor/skills/
-# 把 prompts 放到工作区根目录，Agent 才能读到
+cp -r motion-web-prompt-skill/.cursor/skills/motion-web-design ~/.cursor/skills/   # Cursor
 cp -r motion-web-prompt-skill/prompts ./prompts
 cp motion-web-prompt-skill/catalog.json ./catalog.json
 ```
 
-## Cursor 里怎么用
-
-```
-用 motion-web-design，套 dreamcore-landing 模板
-```
-
-```
-@motion-web-design 以 interactive-discovery 为底，改成我的品牌，其余不动
-```
-
-Skill 会读 `RULES.md`：支持**直接套模板**和**套模板 + 微调**。
+Claude Code / Codex 等：复制 Skill 到 `.agents/skills/motion-web-design/` 即可。
 
 ## 目录
 
 | 路径 | 说明 |
 |------|------|
 | `.cursor/skills/motion-web-design/SKILL.md` | Skill 入口 |
-| `.cursor/skills/motion-web-design/RULES.md` | Agent 规则（必读） |
+| `.cursor/skills/motion-web-design/RULES.md` | **Agent 规则（必读）** |
+| `.cursor/skills/motion-web-design/COMPAT.md` | Cursor / Claude / Bolt / Lovable 等适配 |
 | `catalog.json` | 328 条索引 |
 | `prompts/*.md` | 单条 Prompt |
-| `data/all-prompts.json` | 全文 JSON |
 
 ## 分类
 
 - **WEB** 311 条 · **APP** 17 条
-
-## 更新数据（维护者）
-
-本地维护者若有 `source/` 快照目录，可运行：
-
-```bash
-node scripts/import-from-source.mjs
-```
-
-`source/` 不随本仓库分发。
 
 ## 免责声明
 
