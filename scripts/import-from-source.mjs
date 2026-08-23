@@ -1,0 +1,205 @@
+import { createHash } from "node:crypto";
+import {
+  copyFileSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const root = join(__dirname, "..");
+const sourceDir = join(root, "source");
+const blogRoot = join(root, "..", "小水的博客");
+const blogData = join(blogRoot, "data", "motionsites");
+const blogPublic = join(blogRoot, "public", "motionsites");
+
+const PREVIEW_GRADIENTS = [
+  "linear-gradient(135deg,#050508,#1a0a2e)",
+  "linear-gradient(135deg,#0B1220,#1e3a5f)",
+  "linear-gradient(135deg,#09090B,#3b0764)",
+  "linear-gradient(135deg,#12100E,#431407)",
+  "linear-gradient(135deg,#FDFCFA,#E8F0EC)",
+  "linear-gradient(135deg,#0D1117,#1a3a2a)",
+  "linear-gradient(135deg,#FAFAF8,#FFE8DF)",
+  "linear-gradient(135deg,#0F0F12,#164e63)",
+  "linear-gradient(135deg,#0C0A14,#4c1d95)",
+  "linear-gradient(135deg,#000,#312e81)",
+];
+
+function previewForId(id) {
+  const hash = createHash("md5").update(id).digest();
+  return PREVIEW_GRADIENTS[hash[0] % PREVIEW_GRADIENTS.length];
+}
+
+function colorFromId(id, offset = 0) {
+  const hash = createHash("md5").update(id + offset).digest();
+  const hue = (hash[0] * 360) / 255;
+  return `hsl(${hue.toFixed(0)} 70% 58%)`;
+}
+
+function extractPreview(text) {
+  const urls = [...text.matchAll(/https?:\/\/[^\s)\]"'<>]+/g)]
+    .map((m) => m[0].replace(/\\$/, ""))
+    .filter((u) => !/motionsites\.ai/i.test(u));
+
+  const mp4 = urls.find(
+    (u) =>
+      /\.mp4(\?|$)/i.test(u) ||
+      (u.includes("cloudfront.net") && u.includes(".mp4")),
+  );
+  if (mp4) return { url: mp4, kind: "video" };
+
+  const higgs = urls.find((u) => u.includes("images.higgs.ai"));
+  if (higgs) return { url: higgs, kind: "image" };
+
+  const cloudfrontImg = urls.find(
+    (u) =>
+      u.includes("cloudfront.net") &&
+      /\.(png|jpe?g|webp|gif)(\?|$)/i.test(u),
+  );
+  if (cloudfrontImg) return { url: cloudfrontImg, kind: "image" };
+
+  const gif = urls.find((u) => /\.gif(\?|$)/i.test(u));
+  if (gif) return { url: gif, kind: "gif" };
+
+  const cdn = urls.find(
+    (u) =>
+      u.includes("cloudinary.com") && /\.(png|jpg|webp|gif)/i.test(u),
+  );
+  if (cdn) return { url: cdn, kind: "image" };
+
+  const img = urls.find((u) => /\.(png|jpe?g|webp)(\?|$)/i.test(u));
+  if (img) return { url: img, kind: "image" };
+
+  return null;
+}
+
+const sourcePath = join(sourceDir, "motionsites_all_prompts.json");
+const raw = JSON.parse(readFileSync(sourcePath, "utf8"));
+
+const catalog = raw.map((item) => {
+  const media = extractPreview(item.prompt_text || "");
+  return {
+    id: item.id,
+    title: item.title,
+    category: item.category,
+    type: item.type,
+    page_type: item.page_type,
+    platform: item.platform,
+    is_free: item.is_free,
+    description: item.description,
+    preview: previewForId(item.id),
+    preview_url: media?.url ?? null,
+    preview_kind: media?.kind ?? null,
+    colors: {
+      primary: colorFromId(item.id, 0),
+      accent: colorFromId(item.id, 1),
+      bg: colorFromId(item.id, 2),
+    },
+  };
+});
+
+const previewStats = catalog.reduce(
+  (acc, item) => {
+    if (item.preview_url) acc.withMedia += 1;
+    return acc;
+  },
+  { withMedia: 0 },
+);
+
+const categories = [...new Set(raw.map((x) => x.category))].sort((a, b) =>
+  a.localeCompare(b),
+);
+
+mkdirSync(join(root, "prompts"), { recursive: true });
+mkdirSync(blogData, { recursive: true });
+mkdirSync(blogPublic, { recursive: true });
+
+for (const item of raw) {
+  const md = `# ${item.title}
+
+> ${item.description}
+
+**Category:** ${item.category} · **Type:** ${item.type} · **Platform:** ${item.platform}
+
+---
+
+${item.prompt_text}
+`;
+  writeFileSync(join(root, "prompts", `${item.id}.md`), md, "utf8");
+}
+
+writeFileSync(join(root, "catalog.json"), JSON.stringify(catalog, null, 2), "utf8");
+copyFileSync(sourcePath, join(blogPublic, "all-prompts.json"));
+
+const dataDir = join(root, "data");
+mkdirSync(dataDir, { recursive: true });
+copyFileSync(sourcePath, join(dataDir, "all-prompts.json"));
+
+const typesTs = `export type MotionPromptMeta = {
+  id: string;
+  title: string;
+  category: string;
+  type: string;
+  page_type: string;
+  platform: string;
+  is_free: boolean;
+  description: string;
+  preview: string;
+  preview_url: string | null;
+  preview_kind: "image" | "video" | "gif" | null;
+  colors: {
+    primary: string;
+    accent: string;
+    bg: string;
+  };
+};
+
+export type MotionPrompt = MotionPromptMeta & {
+  prompt_text: string;
+};
+
+export const MOTION_PLATFORMS = [
+  { id: "All", label: "全部" },
+  { id: "website", label: "WEB" },
+  { id: "app", label: "APP" },
+] as const;
+
+export type MotionPlatform = (typeof MOTION_PLATFORMS)[number]["id"];
+`;
+
+writeFileSync(join(blogData, "types.ts"), typesTs, "utf8");
+
+const catalogTs = `// Auto-generated by motionsites提示词整合/scripts/import-from-source.mjs
+import type { MotionPromptMeta } from "./types";
+
+export const motionPromptCount = ${catalog.length};
+
+export const motionCategories = ${JSON.stringify(categories, null, 2)} as const;
+
+export const motionPromptCatalog: MotionPromptMeta[] = ${JSON.stringify(catalog, null, 2)};
+
+export const motionSource = {
+  counts: {
+    total: ${catalog.length},
+    website: ${catalog.filter((x) => x.platform === "website").length},
+    app: ${catalog.filter((x) => x.platform === "app").length},
+    withPreview: ${previewStats.withMedia},
+  },
+} as const;
+`;
+
+writeFileSync(join(blogData, "catalog.ts"), catalogTs, "utf8");
+
+console.log(
+  `Imported ${catalog.length} prompts (${previewStats.withMedia} with media preview) → prompts/, catalog.json, blog`,
+);
+
+try {
+  rmSync(join(blogData, "templates.ts"));
+} catch {
+  /* ignore */
+}

@@ -1,0 +1,73 @@
+# Documentation
+
+> developer documentation site with sidebar nav and clean typography
+
+**Category:** Landing Page · **Tags:** Docs, Developer, Clean
+
+---
+
+Create a premium animated documentation marketing landing page for "Docsify" — developer documentation site with sidebar nav and clean typography.
+
+## Stack
+- React 19 + Vite + TypeScript + Tailwind CSS 4 + motion (Framer Motion v12+)
+- Google Fonts: Inter (all) + JetBrains Mono for code
+- Icons: lucide-react
+
+## Design direction
+- Mood: clear, developer-friendly, documentation-first
+- Palette: background #FFFFFF, surface #F4F4F5, primary #18181B, accent #3B82F6, text #18181B
+- Layout: sidebar + content docs layout, search bar, version selector
+- Motion: sidebar active item highlight slide, code blocks copy button feedback
+- Responsive: mobile-first; breakpoint at 768px; max content width 1200px
+
+## File structure
+```
+src/
+  App.tsx
+  index.css
+  components/
+    Navbar.tsx
+    Hero.tsx
+    LogoCloud.tsx
+    Features.tsx
+    Showcase.tsx
+    Testimonials.tsx
+    Pricing.tsx
+    FAQ.tsx
+    CTA.tsx
+    Footer.tsx
+```
+
+## Page sections (in order)
+1. **Hero** — match the design direction above
+2. **Feature highlights** — match the design direction above
+3. **Code example** — match the design direction above
+4. **Sidebar preview** — match the design direction above
+5. **CTA** — match the design direction above
+6. **Footer** — match the design direction above
+
+## Hero requirements
+- Headline: "Documentation developers actually read"
+- Subhead: "Docsify turns your API into beautiful, searchable docs in minutes."
+- Primary CTA: "Read the docs" | Secondary: "View demo"
+- Split: marketing copy left, docs UI preview right with sidebar
+
+## Animation spec
+- Page load: stagger children with 0.08s delay, y: 24 → 0, opacity 0 → 1, ease [0.22, 1, 0.36, 1]
+- Scroll reveal: use motion whileInView once, viewport margin -80px
+- Buttons: scale 1.02 on hover, subtle glow using primary color at 20% opacity
+- Add one signature scroll-linked parallax layer in the hero only
+
+## Typography
+- Display: Inter 44 weight 700
+- Body: Inter 15
+- Use tight tracking on headlines (-0.02em), relaxed line-height on body (1.65)
+
+## Quality bar
+- No generic AI slop: avoid purple-on-white clichés unless specified
+- Pixel-polished spacing (8px grid), real hover/focus states, accessible contrast
+- Ship a complete single-page site — no lorem ipsum placeholders in hero/CTA
+- All interactive elements keyboard-focusable with visible focus rings
+
+## Deliverable
+Output all component files with working imports. App.tsx composes the full page. index.css sets Tailwind layers and CSS variables for the palette above.
