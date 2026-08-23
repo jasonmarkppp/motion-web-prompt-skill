@@ -56,3 +56,19 @@
 **用户**：Electric 的 neon 背景 + Forma 的 bento Features
 
 **Agent**：以 electric 为骨架（保留其 hero 动效），仅把 Features 区块规格替换为 forma 的 bento 描述；检查 dark 配色一致。
+
+---
+
+## 生成代码：HTML + CDN（默认）
+
+**用户**：用 interactive-discovery，品牌改成「小氵AI」，直接给我能打开的页面。
+
+**Agent**：
+
+1. 读模板 → 内容层替换为小氵AI
+2. 输出单个 `index.html`：
+   - Tailwind CDN + Google Fonts `<link>`
+   - spotlight reveal 用 `<canvas>` + 原生 JS（保留模板里的 radial gradient mask 逻辑）
+   - 图片/视频用模板远程 URL
+3. 文件顶部注释：`<!-- 双击此文件即可在浏览器预览 -->`
+4. **不**生成 `package.json` / Vite 配置，除非用户明确要求工程化项目

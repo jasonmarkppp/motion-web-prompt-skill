@@ -16,7 +16,7 @@ Agent 必须读 [RULES.md](RULES.md)（通用规则，不限 Cursor）。
 2. Agent 读 prompts/{id}.md
 3. 保留：技术栈、布局结构、keyframes、parallax/scroll/glass 等动效、断点
 4. 替换：品牌、文案、行业卖点、CTA、用户给的配色/素材
-5. 输出完整 Prompt（可直接写代码）
+5. 输出完整 Prompt；若写代码 → **默认单文件 `index.html` + CDN，双击即可打开**
 ```
 
 | 用户意图 | 模式 |
@@ -25,7 +25,7 @@ Agent 必须读 [RULES.md](RULES.md)（通用规则，不限 Cursor）。
 | 「原样 / 不要改 / 直接复制」 | 模式 A：原样输出 |
 | 「帮我找一个 XX 风格的」 | 模式 C：推荐 → 再进模式 B |
 
-细节见 [RULES.md](RULES.md)。
+细节见 [RULES.md](RULES.md)（含 **HTML + CDN 默认可双击预览** 规则）。
 
 ## 适用环境（不只 Cursor）
 

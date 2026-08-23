@@ -102,6 +102,41 @@
 - 内容层文字全部用用户提供的；没有的用 `[待填]` 并列出需用户补充的字段
 - 移动端 breakpoint 按模板规定
 
+### 交付格式：单文件 HTML + CDN（默认）
+
+**默认输出一个可双击打开的 `index.html`**，不要默认搭 Vite / npm 工程——除非用户明确要「React 项目」「Vite 工程」「要部署到 Next」等。
+
+原因：单 HTML + CDN 引用，用户**保存后双击就能在浏览器里预览**，零安装、零构建。
+
+**必须遵守**：
+
+1. **一个主文件**：默认只交付 `index.html`（CSS/JS 可内联在文件里；确有必要才拆 `style.css`）
+2. **依赖走 CDN**，常见来源：
+   - Tailwind：`https://cdn.tailwindcss.com`（`<script>` 内写 `tailwind.config`）
+   - React（需要时）：`unpkg` / `esm.sh` 的 UMD 或 ESM
+   - 字体：Google Fonts `<link>`
+   - 图标：lucide 可用 inline SVG，或 CDN
+3. **资源 URL**：图片/视频继续用模板里的远程 URL，或用户提供的链接
+4. **动效实现**：
+   - 模板里的 keyframes / CSS animation → 写在 `<style>` 里
+   - scroll / parallax / spotlight → 用原生 JS（`requestAnimationFrame`、`scroll` 监听）实现同等效果
+   - 原模板用 Framer Motion 的 → **翻译成 CSS + 原生 JS**，不要为此强行上 npm
+5. **文件头注释**：写明「双击此 HTML 即可在浏览器打开」
+
+**模板写的是 React + Vite + Tailwind 时**：读模板规格 → **降级翻译**为 HTML + CDN + 原生 JS，**实现层视觉效果与交互保持一致**，不要照抄「必须 Vite」除非用户点名要工程化项目。
+
+**例外**（才用多文件 / 构建工具）：
+
+- 用户明确说：要 Vite、要 Next.js、要组件库、要上线部署的完整工程
+- 用户已有项目，要求把页面嵌进现有代码库
+
+**自检清单**（交付前）：
+
+- [ ] 不依赖 `npm install` 就能打开
+- [ ] 双击 `index.html` 能跑（动效、字体、图片能加载）
+- [ ] signature 动效还在
+- [ ] 内容是用户自己的（内容层已替换）
+
 ---
 
 ## 禁止事项
